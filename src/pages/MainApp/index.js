@@ -11,7 +11,7 @@ const MainApp = () => {
 		<div className="main-app-wrapper">
 			<Header />
 			<div className="content-wrapper">
-				<Router as Router>
+				<Router>
 					<Switch>
 						<Route path="/create-blog">
 							<CreateBlog />
