@@ -1,0 +1,358 @@
+	FrontEnd
+////////////////
+
+Folder
+pages == menyimpan halaman login, registeer, home dll
+components = menyimpan komponen pembangun untuk membuat pages
+utils = menyimpan fungsi2 yang diperlukan dalam pages
+assets = simpan file gambar, json, dummy
+config = untuk routing api dll
+
+Video 5
+npm add react-router-dom
+
+ketik rafce = untuk fungsional komponen langsung
+
+<BrowserRouter> (umumnya <Router>) = membungkus semua routing/ router
+Router = tempat page berada
+
+Video 6
+agar bisa baca scss, install ==> npm add node-sass
+cari gambar di unsplash.com
+
+folder atoms = komponen terkecil dalam sebuah aplikasi
+
+Video 7
+Di react ketika menggunakan styling dalam page, akan otomatis digunakan untuk seluruh Apps, jadi tidak spesifik
+
+height: 100vh; ==> sesuai dengan tinggi screen
+
+Video 8
+
+Video 9
+MainApp,Header,Footer
+
+Video 11
+Memberikan preview untuk file yang diupload di folder upload
+
+Video 12
+Menambahkan isi detail blog
+
+VIdeo 13
+Berpindah halaman dengan useHistory
+
+import { useHistory } from "react-router-dom";
+
+const history = useHistory();
+onClick={() => history.push("/")} 
+
+Video 18
+Membuat server nodejs
+
+install
+npm install --save express
+npm install
+
+
+server di index.js
+
+menjalankan server ==> nodemon index.js
+
+tambah script di package json, dijalankannya npm start
+"start": "nodemon index.js"
+
+Video 19
+
+tambahkan file .gitignore
+lalu isi 
+node_modules
+package-lock.json
+
+Video 20
+buat router caranya:
+const router = express.Router();
+
+membuat endpoint:
+router.use("/products", (req, res, next) => {
+	console.log("request :", req);
+});
+
+request yang paling sering digunakan
+console.log("url :", req.originalUrl);
+console.log("method :", req.method);
+
+router.use = menerima semua method
+
+Video 20
+folder 
+- routes = untuk routing
+- controllers = untuk controllers di setiap end point
+- model = struktur database yang dibuat
+
+Video 22
+Postman
+
+Video 23
+Menghandle error ORIGIN menggunakan CORS, klo dimobile tidak muncul
+
+Video 24
+Mengirimkan request body, untuk API menerima request(POST,DELETE,PUT DLL) yang dikirim klien
+
+Postman Body
+- raw = mengrimkan berupa value data yang masih kosong
+
+npm install body-parser
+
+request yang dikirim banyak value, jadi parsing data supaya lebih mudah dibacanya
+
+Video 25
+Merencakan REST API
+
+Menggunakan Postman untuk mendokumentasi API
+
+Membuat perancangan API agar ketika pengerjaan API lebih cepat dan lancar, karena sudah memiliki rencana respon,request 
+
+Video 26
+Membuat dummy API dan Collection di Postman
+
+Cara membuat collection di postman:
+1. klik new collection
+2. tulis nama collection
+3. klik save pada url yang mau disimpan
+
+Fungsinya untuk dokumentasi di web, memudahkan tim front end untuk integrasi meskipun API belum selesai
+
+Video 27
+Membuat postingan blog baru
+
+
+Video 28
+Validasi req
+di routes/blog.js
+
+pakai express validator
+npm i express-validator
+
+const {body} = require('express-validator')
+router.post("/post", [body("title").isLength({ min: 5 }), body("body").isLength({ min: 5 })], blogController.createBlogPost);
+// title nya minimal 5 huruf
+// body nya minimal 5 huruf
+
+di controller/blog.js
+const {validationResult} = require('express-validator')
+const errors = validationResult(req);
+
+	// Cek apakah req error / validasi
+	if (!errors.isEmpty()) {
+		// kalau ada error bernilai akan false
+		// kalau tidak ada error bernilai akan true
+		res.status(400).json({
+			message: "Request Error",
+			data: null,
+		});
+	}
+
+di router/blog.js
+withMessage('Input title miniml 5 karakter'), // Menambahkan pesan error
+
+keliatannya di cmd
+
+untuk memberi respon ke client, masuk index.js
+
+diubah index.js
+app.use((error, req, res, next) => {
+	const status = error.errorStatus || 500; //default 500
+	const message = error.message;
+const data = error.data;
+
+  res.status(status).json({ message: message, data: data }); // Error global
+});
+
+
+controller/index.js
+if (!errors.isEmpty()) {
+    const err = new Error("Invalid Value");
+    err.errorStatus = 400;
+    err.data = errors.array(); // dari routes/blog.js
+    throw err;
+}
+
+Video 29
+Register mongodb
+
+mongodb atlas tak perlu install offline, tapi bisa live secara online
+
+
+Video 30
+Setup MongoDB Atlas
+
+1 project hanya bisa 1 cluster
+Agar bisa menggunakan membuat mongodb atlas secara free
+- Buat new project
+- new cluster
+
+security 
+==> membuat database akses
+untuk melimit siapa saja yang bisa masuk database kita
+- Add new database user
+- method password
+- input fieldnya
+	user : fajar
+	password : z4VVn7Ue5pIl9RnL
+	akses: read and write to any database
+
+membuat network access 
+==> membuat wait list untuk ip, setting laptop yang dimiliki supaya bisa akses mongodb atlas ini
+tujuannya supaya mongodb tidak bisa diakses dimanapun kecuali dari IP yang sudah di set up
+
+Add current ip address = hanya dari laptop sendiri
+allow access from anywhere = bisa diakses dimana saja
+
+
+Video 31
+Mengkonesikan mongodb ke server node js
+
+1. klik connect di cluster
+2. connect your application
+3. copy link set up nya
+4. masuk project mern-blog
+5. install mongoose
+	npm i mongoose ==> untuk media mengkonesikan nodejs ke mongodb atlas,
+				membuat model yang akan digunakan dalam pembuatan db didalam mongodb
+6. import mongoose di index.js
+	const mongoose = require('mongoose')
+7. konek mongoose
+	mongoose.connect(link cluster)
+
+
+Video 32
+Membuat model di nodejs menggunakan mongoose
+
+model = struktur database
+
+Schema = istilah untuk menentukan sebuah model
+
+bisa membuat timestamp di proses pembuatan database,
+timestamp ini adalah ketika db di create di mongodb atlas, akan meyimpan scr default created_at dan updated_at
+
+id di generate sendiri oleh mongodb
+
+
+Video 33
+
+Menyimpan postingan ke monngodb
+
+di controllers/blog.js
+
+// Add
+  const Posting = new BlogPost({
+    title: title,
+    body: body,
+    author:{
+      uid: 1,
+      name: "Fajar Islami"
+    }
+  })
+
+// Menyimpan ke database
+Posting.save()
+
+Video 34
+Upload Image
+
+npm install multer
+untuk middleware file/image/video
+
+gambar yang disimpan di mongo hanya path nya saja
+
+tes nya di postman lewat formdata
+
+
+Video 35
+Error pemanggilan image karena ada security dari backend
+
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
+
+Video 36
+Mengambil seluruh data didalam blogpost
+
+di controller/blog.js
+exports.getAllBlogPost = (req, res, next) => {
+  // find() == Memanggil seluruh data
+  BlogPost.find()
+
+    .then((result) => {
+      res.status(200).json({
+        message: 'Data blog post berhasil dipanggil',
+        data: result,
+      });
+    })
+    .catch((err) => {
+      next(err); //Mengirim error ke index.js
+    });
+};
+
+Video 37
+Mengambil postingan berdasarkan ID
+dengan mengirim param dari id blogpostnya
+
+controller/blog.js
+routes/blog.js
+
+Video 38
+Update Postingan
+menggunakan put
+
+controller/blog.js
+routes/blog.js
+
+Video 39
+Menghapus posting
+
+controller/blog.js
+cara remove file
+ const fs = require('fs')
+ fs.unlink(filePath)
+
+routes/blog.js
+
+Video 40
+Pagination pada Response API
+Pada getAllBlogPost
+
+di routes/blog
+menambahkan query paramter
+router.get('/posts?page=1&perPage=5', blogController.getAllBlogPost);  // 1 Page panggil 5 data
+
+di controller/blog
+const currentPage = req.query.page
+
+const currentPage = req.query.page || 1; // memanggil query page defaultnya 1
+const perPage = req.query.perPage || 5; // memanggil query perPage defaultnya 5
+
+countDocuments() = menghitung jumlah data
+
+respon biasanya menggunakan "_"
+
+mockaroo == untuk generate data dummy
+
+========================================================
+
+Video 41
+Instalasi axios
+Proses integrasi dengan front end dengan Fecting API
+di install pada Front end
+npm install axios
+
+Video 42
+Pemanggilan API BlogPost dengan Axios
+di page/home/index
+
+
+Video 43
+Mengganti data dummy
+di react home/index.js
+
+http://localhost:4000 = url server
+http://localhost:4000/v1/blog/posts = url api
